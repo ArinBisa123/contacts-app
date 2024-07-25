@@ -1,11 +1,11 @@
-import { addContact } from "../utils/data";
+import { addContact } from "../utils/api";
 import ContactInput from "../components/ContactInput";
 import { useNavigate } from "react-router-dom";
 
 function addPage() {
   const navigate = useNavigate();
-  function addContactHandler(contact) {
-    addContact(contact);
+  async function addContactHandler(contact) {
+    await addContact(contact);
     navigate("/");
   }
   return (

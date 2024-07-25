@@ -1,8 +1,10 @@
 import ContactList from "../components/ContactList";
-import { deleteContact, getContacts } from "../utils/data";
+// import { deleteContact } from "../utils/data";
 import React from "react";
 import SearchBar from "../components/SearchBar";
 import { useSearchParams } from "react-router-dom";
+import { getContacts, deleteContact } from "../utils/api";
+import PropTypes from "prop-types";
 
 function HomepageWrapper() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -19,18 +21,27 @@ class Homepage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      contacts: getContacts(),
+      contacts: [],
       keyword: props.defaultKeyword || "",
     };
     this.onDeleteHandler = this.onDeleteHandler.bind(this);
     this.keywordChangeHandler = this.keywordChangeHandler.bind(this);
   }
-  onDeleteHandler(id) {
-    deleteContact(id);
-    // update contact state
+  async componentDidMount() {
+    const { data } = await getContacts();
     this.setState(() => {
       return {
-        contacts: getContacts(),
+        contacts: data,
+      };
+    });
+  }
+  async onDeleteHandler(id) {
+    await deleteContact(id);
+    // update contact state
+    const { data } = await getContacts();
+    this.setState(() => {
+      return {
+        contacts: data,
       };
     });
   }
@@ -58,5 +69,10 @@ class Homepage extends React.Component {
     );
   }
 }
+
+Homepage.propTypes = {
+  defaultKeyword: PropTypes.string.isRequired,
+  keywordChange: PropTypes.func.isRequired,
+};
 
 export default HomepageWrapper;
